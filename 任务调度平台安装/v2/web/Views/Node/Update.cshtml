@@ -1,0 +1,54 @@
+﻿@model Dyd.BaseService.TaskManager.Domain.Model.tb_node_model
+@{
+    ViewBag.Title = "Add";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    function sub() {
+        if ($("#nodename").val() == "") {
+            alert("请填写节点名称！");
+            return false;
+        }
+        var nodeip = $("#nodeip").val();
+        if (nodeip == "") {
+            alert("请填写节点IP！");
+            return false;
+        }
+        //else {
+        //    //ip地址
+        //    var exp = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+        //    var reg = nodeip.match(exp);
+        //    if (reg == null) {
+        //        alert("IP地址不合法！");
+        //        return false;
+        //    }
+        //}
+    }
+</script>
+<div class="head">
+    <div class="title">
+        修改节点 @Html.Raw(Dyd.BaseService.TaskManager.Web.Models.Common.HelpHtml(""))
+    </div>
+</div>
+<div>
+    <input type="hidden" value="@Model.id" id="id" />
+    @using (Html.BeginForm("Update", "Node", FormMethod.Post, new { @onsubmit = "return sub()" }))
+    {
+    <ul  class="mydetail">
+        <li>
+            <label>节点名</label><span><input type="text" id="nodename" name="nodename" value="@Model.nodename" /></span>
+        </li>
+        <li>
+            <label>节点ip/host</label><input type="text" id="nodeip" name="nodeip" value="@Model.nodeip" />
+        </li>
+        <li>
+            <label>是否检测节点状态</label><input type="checkbox" id="ifcheckstate" name="ifcheckstate" value="@(Model.ifcheckstate.ToString())" @(Model.ifcheckstate==true?"checked=checked":"") onclick=" $(this).val($(this).is(':checked'));"  />(若开启，若检测到节点停止，则发邮件)
+            <script type="text/javascript">
+            </script>
+        <li>
+            <input type="submit" class="btn1" value="提交" />
+        </li>
+    </ul>
+    }
+</div>

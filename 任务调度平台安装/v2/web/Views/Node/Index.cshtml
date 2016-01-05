@@ -1,0 +1,105 @@
+﻿@using Webdiyer.WebControls.Mvc
+@model PagedList<Dyd.BaseService.TaskManager.Domain.Model.tb_node_model>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    function Delete(id) {
+        $.ajax({
+            url: '@Url.Action("Delete", "Node")',
+            type: "post",
+            data: {
+                id: id
+            },
+            success: function (data) {
+                if (data.code == 1) {
+                    if (data.state == true) {
+                        alert("删除成功！");
+                        window.location.reload();
+                    }
+                    else {
+                        alert("删除失败：请确认该节点下的任务已清除！");
+                    }
+                }
+                else {
+                    alert(data.msg);
+                }
+            }
+        })
+    }
+</script>
+
+<div class="head">
+    <div class="title">
+        节点列表 @Html.Raw(Dyd.BaseService.TaskManager.Web.Models.Common.HelpHtml("用于显示任务的执行节点，节点可以分布在不同集群中，在此处列表统一管理和显示。当节点处于状态检查时，会被平台定期扫描，若节点不在运行，会被平台记录到错误日志中，邮件等通知管理员。"))
+    </div>
+</div>
+<div class="orderlist m10 myorder">
+   @* @using (Html.BeginForm("index", "Node", new RouteValueDictionary { { "id", "searchForm" } }))
+    {
+        <div class="item_list">
+            <ul>
+                <li>
+                    <label>创建时间</label><input type="text" class="text" autocomplete="off"name="CStime" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'1900-01-01',readOnly:true})" />
+                    至
+                <input type="text" class="text" autocomplete="off" name="CEtime" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'1900-01-01',readOnly:true})" />
+                </li>
+                <li>
+                    <label>关键字</label>
+                    <input type="text" name="keyword" value="" />
+                </li>
+                <li>
+                    <input type="submit" class="btn1" value="搜索" accesskey="S" /></li>
+            </ul>
+        </div>
+    }*@
+    <div class="tab_cont">
+    <a href="@Url.Action("Add", "Node")" class="btn1">新增</a>
+        <div class="list">
+            <table>
+                <tr>
+                    <th>id</th>
+                    <th>节点</th>
+                    <th>创建时间</th>
+                    <th>IP/Host</th>
+                    <th>心跳更新时间</th>
+                    <th>状态</th>
+                    <th>检查心跳状态</th>
+                    <th>操作</th>
+                </tr>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.id</td>
+                        <td>@item.nodename</td>
+                        <td>@item.nodecreatetime</td>
+                        <td>@item.nodeip</td>
+                        <td>@item.nodelastupdatetime</td>
+                        <td>
+                            @if ((ViewBag.sqldatetimenow - item.nodelastupdatetime) > TimeSpan.FromSeconds(10))
+                            { 
+                                <span class="stopstate">停止</span>
+                            }
+                            else
+                            {
+                                <span class="runstate">运行</span>
+                            }
+                        </td>
+                        <td>@(Convert.ToBoolean(item.ifcheckstate) == true ? "是" : "否")</td>
+                        <td>
+                            <a href="@Url.Action("Update", "Node", new { id = @item.id })">修改</a>
+                            <input type="button" value="删除" onclick="Delete('@item.id    ')" />
+                            <a href="@Url.Action("Index", "Task", new { nodeid = @item.id })">查看任务</a>
+                        </td>
+                    </tr>
+                }
+            </table>
+            <div class="total pt10">
+                <div class="fl">共<em>@Model.TotalPageCount</em>页<em>@Model.TotalItemCount</em>条记录，当前为第<em>@Model.CurrentPageIndex</em>页</div>
+                @Html.Pager(Model, new PagerOptions { PageIndexParameterName = "pageindex", ShowPageIndexBox = true, PageIndexBoxType = PageIndexBoxType.TextBox, CssClass = "mvcPager"  })
+            </div>
+        </div>
+    </div>
+</div>

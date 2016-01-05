@@ -1,0 +1,55 @@
+﻿@using Dyd.BaseService.TaskManager.Domain.Model;
+@model Dyd.BaseService.TaskManager.Domain.Model.tb_command_model_Ex
+@{
+    ViewBag.Title = "Add";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<tb_node_model> Node = ViewBag.Node as List<tb_node_model>;
+    
+}
+<div class="head">
+    <div class="title">
+        修改 @Html.Raw(Dyd.BaseService.TaskManager.Web.Models.Common.HelpHtml(""))
+    </div>
+</div>
+<div>
+    @using (Html.BeginForm("Update", "Command", FormMethod.Post))
+    {
+    <ul  class="mydetail">
+        <li>
+            <label>命令名称</label>
+            <select name="commandname">
+                <option value="ReStartTask" @Html.Raw(@Model.commandname=="ReStartTask"?"selected=selected":"")>ReStartTask</option>
+                <option value="StopTask" @Html.Raw(@Model.commandname=="StopTask"?"selected=selected":"")>StopTask</option>
+                <option value="StartTask" @Html.Raw(@Model.commandname=="StartTask"?"selected=selected":"")>StartTask</option>
+                <option value="UninstallTask" @Html.Raw(@Model.commandname=="UninstallTask"?"selected=selected":"")>UninstallTask</option>
+            </select>
+        </li>
+        <li>
+            <label>任务</label><span>@Model.taskname</span>
+        </li>
+        <li>
+            <label>节点</label>
+            <select name="nodeid">
+                @foreach (var n in Node)
+                { 
+                    <option value="@n.id" @Html.Raw(@Model.nodeid==n.id?"selected=selected":"")>@n.nodename</option>
+                }
+            </select>
+        </li>
+        <li>
+            <label>命令JSON</label><textarea id="command" name="command">@Model.command</textarea>
+        </li>
+        <li>
+            <label>表达式</label>
+            <select name="commandstate">
+                <option value="0" @Html.Raw(@Model.commandstate==0?"selected=selected":"")>None</option>
+                <option value="1" @Html.Raw(@Model.commandstate==1?"selected=selected":"")>Error</option>
+                <option value="2" @Html.Raw(@Model.commandstate==2?"selected=selected":"")>Success</option>
+            </select>
+        </li>
+        <li>
+            <input type="submit" class="btn1" value="提交" />
+        </li>
+    </ul>
+    }
+</div>

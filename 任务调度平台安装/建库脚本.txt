@@ -1,0 +1,388 @@
+USE [dyd_bs_task]
+GO
+/****** Object:  Table [dbo].[tb_version]    Script Date: 04/30/2015 14:52:37 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[tb_version](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[taskid] [int] NOT NULL,
+	[version] [int] NOT NULL,
+	[versioncreatetime] [datetime] NOT NULL,
+	[zipfile] [image] NOT NULL,
+	[zipfilename] [varchar](25) NULL,
+ CONSTRAINT [PK_tb_version] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+CREATE NONCLUSTERED INDEX [IX_tb_version_taskid] ON [dbo].[tb_version] 
+(
+	[taskid] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_tb_version_version] ON [dbo].[tb_version] 
+(
+	[version] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'压缩文件二进制文件' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'tb_version', @level2type=N'COLUMN',@level2name=N'zipfile'
+GO
+/****** Object:  Table [dbo].[tb_user]    Script Date: 04/30/2015 14:52:37 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[tb_user](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[userstaffno] [varchar](25) NOT NULL,
+	[username] [varchar](25) NOT NULL,
+	[userrole] [tinyint] NOT NULL,
+	[usercreatetime] [datetime] NOT NULL,
+	[usertel] [varchar](20) NOT NULL,
+	[useremail] [varchar](50) NOT NULL,
+	[userpsw] [nvarchar](50) NULL CONSTRAINT [DF_tb_user_userpsw]  DEFAULT ((123)),
+ CONSTRAINT [PK_tb_user] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'员工工号' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'tb_user', @level2type=N'COLUMN',@level2name=N'userstaffno'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'员工角色，查看代码枚举：开发人员，管理员' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'tb_user', @level2type=N'COLUMN',@level2name=N'userrole'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'员工手机号码' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'tb_user', @level2type=N'COLUMN',@level2name=N'usertel'
+GO
+/****** Object:  Table [dbo].[tb_tempdata]    Script Date: 04/30/2015 14:52:37 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[tb_tempdata](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[taskid] [int] NOT NULL,
+	[tempdatajson] [varchar](500) NOT NULL,
+	[tempdatalastupdatetime] [datetime] NOT NULL,
+ CONSTRAINT [PK_tb_tempdata] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+CREATE NONCLUSTERED INDEX [IX_tb_tempdata_taskid] ON [dbo].[tb_tempdata] 
+(
+	[taskid] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[tb_task]    Script Date: 04/30/2015 14:52:37 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[tb_task](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[taskname] [varchar](50) NOT NULL,
+	[categoryid] [int] NOT NULL,
+	[nodeid] [int] NOT NULL,
+	[taskcreatetime] [datetime] NOT NULL,
+	[taskupdatetime] [datetime] NOT NULL,
+	[tasklaststarttime] [datetime] NOT NULL,
+	[tasklastendtime] [datetime] NOT NULL,
+	[tasklasterrortime] [datetime] NOT NULL,
+	[taskerrorcount] [int] NOT NULL,
+	[taskruncount] [bigint] NOT NULL,
+	[taskcreateuserid] [int] NOT NULL,
+	[taskstate] [tinyint] NOT NULL,
+	[taskversion] [int] NOT NULL,
+	[taskappconfigjson] [varchar](1000) NOT NULL,
+	[taskcron] [varchar](20) NOT NULL,
+	[taskmainclassdllfilename] [varchar](60) NOT NULL,
+	[taskmainclassnamespace] [varchar](100) NOT NULL,
+	[taskremark] [varchar](5000) NOT NULL,
+ CONSTRAINT [PK_tb_task] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+CREATE NONCLUSTERED INDEX [IX_tb_task_nodeid] ON [dbo].[tb_task] 
+(
+	[nodeid] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_tb_task_taskstate] ON [dbo].[tb_task] 
+(
+	[taskstate] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'任务名' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'tb_task', @level2type=N'COLUMN',@level2name=N'taskname'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'分类id' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'tb_task', @level2type=N'COLUMN',@level2name=N'categoryid'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'节点id' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'tb_task', @level2type=N'COLUMN',@level2name=N'nodeid'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'任务创建时间' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'tb_task', @level2type=N'COLUMN',@level2name=N'taskcreatetime'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'任务更新时间' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'tb_task', @level2type=N'COLUMN',@level2name=N'taskupdatetime'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'任务上一次执行时间' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'tb_task', @level2type=N'COLUMN',@level2name=N'tasklaststarttime'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'任务上一次结束时间' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'tb_task', @level2type=N'COLUMN',@level2name=N'tasklastendtime'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'任务出错时间' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'tb_task', @level2type=N'COLUMN',@level2name=N'tasklasterrortime'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'任务连续出错次数' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'tb_task', @level2type=N'COLUMN',@level2name=N'taskerrorcount'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'任务总成功运行次数' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'tb_task', @level2type=N'COLUMN',@level2name=N'taskruncount'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'任务创建人id' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'tb_task', @level2type=N'COLUMN',@level2name=N'taskcreateuserid'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'任务执行状态，查看代码枚举' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'tb_task', @level2type=N'COLUMN',@level2name=N'taskstate'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'任务版本号' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'tb_task', @level2type=N'COLUMN',@level2name=N'taskversion'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'任务app配置字典' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'tb_task', @level2type=N'COLUMN',@level2name=N'taskappconfigjson'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'任务执行频率cron表达式' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'tb_task', @level2type=N'COLUMN',@level2name=N'taskcron'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'任务入口函数dll文件名' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'tb_task', @level2type=N'COLUMN',@level2name=N'taskmainclassdllfilename'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'任务入口执行函数的路径' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'tb_task', @level2type=N'COLUMN',@level2name=N'taskmainclassnamespace'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'任务备注' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'tb_task', @level2type=N'COLUMN',@level2name=N'taskremark'
+GO
+/****** Object:  Table [dbo].[tb_performance]    Script Date: 04/30/2015 14:52:37 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[tb_performance](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[nodeid] [int] NOT NULL,
+	[taskid] [int] NOT NULL,
+	[cpu] [float] NOT NULL,
+	[memory] [float] NOT NULL,
+	[installdirsize] [float] NOT NULL,
+	[lastupdatetime] [datetime] NOT NULL,
+ CONSTRAINT [PK_tb_performance] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_tb_performance_taskid] ON [dbo].[tb_performance] 
+(
+	[taskid] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[tb_node]    Script Date: 04/30/2015 14:52:37 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[tb_node](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[nodename] [varchar](50) NOT NULL,
+	[nodecreatetime] [datetime] NOT NULL,
+	[nodeip] [varchar](20) NOT NULL,
+	[nodelastupdatetime] [datetime] NOT NULL,
+	[ifcheckstate] [bit] NOT NULL,
+ CONSTRAINT [PK_tb_node] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[tb_log]    Script Date: 04/30/2015 14:52:37 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[tb_log](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[msg] [varchar](2000) NOT NULL,
+	[logtype] [tinyint] NOT NULL,
+	[logcreatetime] [datetime] NOT NULL,
+	[taskid] [int] NOT NULL,
+	[nodeid] [int] NOT NULL,
+ CONSTRAINT [PK_tb_log] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+CREATE NONCLUSTERED INDEX [IX_tb_log_logcreatetime] ON [dbo].[tb_log] 
+(
+	[logcreatetime] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[tb_error]    Script Date: 04/30/2015 14:52:37 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[tb_error](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[msg] [varchar](2000) NOT NULL,
+	[errortype] [tinyint] NOT NULL,
+	[errorcreatetime] [datetime] NOT NULL,
+	[taskid] [int] NOT NULL,
+	[nodeid] [int] NOT NULL,
+ CONSTRAINT [PK_tb_error] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+CREATE NONCLUSTERED INDEX [IX_tb_error_errorcreatetime] ON [dbo].[tb_error] 
+(
+	[errorcreatetime] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_tb_error_errortype] ON [dbo].[tb_error] 
+(
+	[errortype] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[tb_command]    Script Date: 04/30/2015 14:52:37 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[tb_command](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[command] [varchar](400) NOT NULL,
+	[commandname] [varchar](20) NOT NULL,
+	[commandstate] [tinyint] NOT NULL,
+	[taskid] [int] NOT NULL,
+	[nodeid] [int] NOT NULL,
+	[commandcreatetime] [datetime] NOT NULL,
+ CONSTRAINT [PK_tb_command] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+CREATE NONCLUSTERED INDEX [IX_tb_command_nodeid] ON [dbo].[tb_command] 
+(
+	[nodeid] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'命令json' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'tb_command', @level2type=N'COLUMN',@level2name=N'command'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'命令名，参考代码枚举' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'tb_command', @level2type=N'COLUMN',@level2name=N'commandname'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'命令执行状态，参考代码枚举' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'tb_command', @level2type=N'COLUMN',@level2name=N'commandstate'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'任务id' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'tb_command', @level2type=N'COLUMN',@level2name=N'taskid'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'节点id' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'tb_command', @level2type=N'COLUMN',@level2name=N'nodeid'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'命令创建时间' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'tb_command', @level2type=N'COLUMN',@level2name=N'commandcreatetime'
+GO
+/****** Object:  Table [dbo].[tb_category]    Script Date: 04/30/2015 14:52:37 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[tb_category](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[categoryname] [varchar](25) NOT NULL,
+	[categorycreatetime] [datetime] NOT NULL,
+ CONSTRAINT [PK_category] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'分类名' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'tb_category', @level2type=N'COLUMN',@level2name=N'categoryname'
+GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'分类创建时间' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'tb_category', @level2type=N'COLUMN',@level2name=N'categorycreatetime'
+GO
+/****** Object:  Default [DF_tb_node_nodelastupdatetime]    Script Date: 04/30/2015 14:52:37 ******/
+ALTER TABLE [dbo].[tb_node] ADD  CONSTRAINT [DF_tb_node_nodelastupdatetime]  DEFAULT ('') FOR [nodelastupdatetime]
+GO
+/****** Object:  Default [DF_tb_node_ifcheckstate]    Script Date: 04/30/2015 14:52:37 ******/
+ALTER TABLE [dbo].[tb_node] ADD  CONSTRAINT [DF_tb_node_ifcheckstate]  DEFAULT ((0)) FOR [ifcheckstate]
+GO
+/****** Object:  Default [DF_tb_performance_nodeid]    Script Date: 04/30/2015 14:52:37 ******/
+ALTER TABLE [dbo].[tb_performance] ADD  CONSTRAINT [DF_tb_performance_nodeid]  DEFAULT ((0)) FOR [nodeid]
+GO 
+/****** Object:  Default [DF_tb_performance_lastupdatetime]    Script Date: 04/30/2015 14:52:37 ******/
+ALTER TABLE [dbo].[tb_performance] ADD  CONSTRAINT [DF_tb_performance_lastupdatetime]  DEFAULT (getdate()) FOR [lastupdatetime]
+GO
+/****** Object:  Default [DF_tb_task_taskupdatetime]    Script Date: 04/30/2015 14:52:37 ******/
+ALTER TABLE [dbo].[tb_task] ADD  CONSTRAINT [DF_tb_task_taskupdatetime]  DEFAULT ('') FOR [taskupdatetime]
+GO
+/****** Object:  Default [DF_tb_task_tasklaststarttime]    Script Date: 04/30/2015 14:52:37 ******/
+ALTER TABLE [dbo].[tb_task] ADD  CONSTRAINT [DF_tb_task_tasklaststarttime]  DEFAULT ('') FOR [tasklaststarttime]
+GO
+/****** Object:  Default [DF_tb_task_tasklastendtime]    Script Date: 04/30/2015 14:52:37 ******/
+ALTER TABLE [dbo].[tb_task] ADD  CONSTRAINT [DF_tb_task_tasklastendtime]  DEFAULT ('') FOR [tasklastendtime]
+GO
+/****** Object:  Default [DF_tb_task_tasklasterrortime]    Script Date: 04/30/2015 14:52:37 ******/
+ALTER TABLE [dbo].[tb_task] ADD  CONSTRAINT [DF_tb_task_tasklasterrortime]  DEFAULT ('') FOR [tasklasterrortime]
+GO
+/****** Object:  Default [DF_tb_task_taskerrorcount]    Script Date: 04/30/2015 14:52:37 ******/
+ALTER TABLE [dbo].[tb_task] ADD  CONSTRAINT [DF_tb_task_taskerrorcount]  DEFAULT ((0)) FOR [taskerrorcount]
+GO
+/****** Object:  Default [DF_tb_task_taskruncount]    Script Date: 04/30/2015 14:52:37 ******/
+ALTER TABLE [dbo].[tb_task] ADD  CONSTRAINT [DF_tb_task_taskruncount]  DEFAULT ((0)) FOR [taskruncount]
+GO
+
+INSERT INTO [dbo].[tb_user]
+           ([userstaffno]
+           ,[username]
+           ,[userrole]
+           ,[usercreatetime]
+           ,[usertel]
+           ,[useremail]
+           ,[userpsw])
+     VALUES
+           ('001'
+           ,'admin'
+           ,0
+           ,GETDATE()
+           ,''
+           ,''
+           ,'123')
+GO

@@ -1,0 +1,103 @@
+﻿@using Webdiyer.WebControls.Mvc
+@using Dyd.BaseService.TaskManager.Domain.Model;
+@model PagedList<Dyd.BaseService.TaskManager.Domain.Model.tb_loginfo_model>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<tb_task_model> Task = ViewBag.Task as List<tb_task_model>;
+    List<tb_node_model> Node = ViewBag.Node as List<tb_node_model>;
+}
+<div class="head">
+    <div class="title">
+        日志列表 @Html.Raw(Dyd.BaseService.TaskManager.Web.Models.Common.HelpHtml("用于显示整个任务平台的日常日志，包含错误日志和系统日志，便于排查和分析平台的问题和运行情况。日志用于存档，可定期从数据库中清理。"))
+    </div>
+</div>
+<div>
+    @using (Html.BeginForm("Log", "Log",FormMethod.Get))
+    {
+        <div class="item_list">
+            <ul>
+                <li>
+                    <label>日志ID</label>
+                    <input type="text" name="id" value="@(ViewBag.id>=0?ViewBag.id:"")" />
+                </li>
+                <li>
+                    <label>关键字</label>
+                    <input type="text" name="keyword" value="@(string.IsNullOrEmpty(ViewBag.keyword)?"":ViewBag.keyword)" />
+                </li>
+                <li>
+                    <label>任务</label>
+                    <select name="taskid">
+                        <option value="-1">请选择</option>
+                        @foreach (var t in Task)
+                        { 
+                            <option value="@t.id" @(ViewBag.taskid==t.id?"selected='selected'":"")>@t.taskname</option>
+                        }
+                    </select>
+                </li>
+                <li>
+                    <label>节点</label>
+                    <select name="nodeid">
+                        <option value="-1">请选择</option>
+                        @foreach (var n in Node)
+                        { 
+                            <option value="@n.id" @(ViewBag.nodeid==n.id?"selected='selected'":"")>@n.nodename</option>
+                        }
+                    </select>
+                </li>
+                <li>
+                    <label>日志类型</label>
+                    <select name="logtype">
+                        <option value="-1">请选择</option>
+                        @foreach (var value in Enum.GetValues(typeof(XXF.BaseService.TaskManager.SystemRuntime.EnumTaskLogType)))
+                        {
+                            object[] objAttrs = value.GetType().GetField(value.ToString()).GetCustomAttributes(typeof(System.ComponentModel.DescriptionAttribute), true);
+                            if (objAttrs != null && 
+                                objAttrs.Length > 0)
+                            {
+                                System.ComponentModel.DescriptionAttribute descAttr = objAttrs[0] as System.ComponentModel.DescriptionAttribute;
+                                <option value="@((int)value)" @(ViewBag.logtype==(int)value?"selected='selected'":"")>@descAttr.Description</option>
+                            }
+                        }
+                    </select>
+                </li>
+                 <li>
+                    <label>创建时间</label><input type="text" class="text" autocomplete="off"name="CStime" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'1900-01-01',readOnly:true})"  value="@(string.IsNullOrEmpty(ViewBag.CStime)?"":ViewBag.CStime)"/>
+                    至
+                <input type="text" class="text" autocomplete="off" name="CEtime" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'1900-01-01',readOnly:true})"  value="@(string.IsNullOrEmpty(ViewBag.CEtime)?"":ViewBag.CEtime)"/>
+                </li>
+                
+                <li class="search">
+                 <input type="submit" class="btn1" value="搜索" accesskey="S" /></li>
+            </ul>
+        </div>
+    }
+    <table>
+        <tr>
+            <th>日志ID</th>
+            <th>任务名</th>
+            <th>节点名</th>
+            <th>用户名</th>
+            <th style="width:60%">内容</th>
+            <th>时间</th>
+            <th>类型</th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.log_model.id</td>
+                <td><a href="@Url.Action("Index", "Task", new { taskid = item.log_model.taskid })">@item.taskname [@item.log_model.taskid]</a></td>
+                <td>@item.tasknodename [@item.log_model.nodeid]</td>
+                <td>@item.taskusername</td>
+                <td title="@item.log_model.msg">@Html.Raw((item.log_model.logtype == (int)XXF.BaseService.TaskManager.SystemRuntime.EnumTaskLogType.CommonError ||item.log_model.logtype==(int)XXF.BaseService.TaskManager.SystemRuntime.EnumTaskLogType.SystemError) ?
+                string.Format("<b style='color:red'>{0}</b>",XXF.Extensions.StringMehtodHelper.SubString2(item.log_model.msg,300)): XXF.Extensions.StringMehtodHelper.SubString2(item.log_model.msg,300))</td>
+                <td>@(item.log_model.logcreatetime)</td>
+                <td>@(Dyd.BaseService.TaskManager.Core.EnumUtils<XXF.BaseService.TaskManager.SystemRuntime.EnumTaskLogType>.GetText((XXF.BaseService.TaskManager.SystemRuntime.EnumTaskLogType)item.log_model.logtype))</td>
+            </tr>
+        }
+    </table>
+    <div class="total pt10">
+    <div class="fl">共<em>@Model.TotalPageCount</em>页<em>@Model.TotalItemCount</em>条记录，当前为第<em>@Model.CurrentPageIndex</em>页</div>
+        @Html.Pager(Model,new PagerOptions{PageIndexParameterName = "pageindex",ShowPageIndexBox = true,PageIndexBoxType = PageIndexBoxType.TextBox, CssClass="mvcPager"})
+    </div>
+</div>

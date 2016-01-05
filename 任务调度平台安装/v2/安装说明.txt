@@ -1,0 +1,4 @@
+1.数据库 dyd_bs_task
+tb_task表 taskcron 字段 改为varchar(50)
+2.web 网站覆盖发布
+3.各个节点覆盖更新，“任务dll共享程序集”下面xxf使用最新版本。

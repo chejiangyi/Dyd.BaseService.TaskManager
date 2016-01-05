@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A17F6E87-E455-4493-B4AE-3E11BD881F36}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Dyd.BaseService.TaskManager.Node</RootNamespace>
+    <AssemblyName>Dyd.BaseService.TaskManager.Node</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>Svn</SccProjectName>
+    <SccLocalPath>Svn</SccLocalPath>
+    <SccAuxPath>Svn</SccAuxPath>
+    <SccProvider>SubversionScc</SccProvider>
+    <WebGreaseLibPath>..\packages\WebGrease.1.5.2\lib</WebGreaseLibPath>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Common.Logging">
+      <HintPath>..\引用\Common.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\引用\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="Quartz">
+      <HintPath>..\引用\Quartz.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpCompress">
+      <HintPath>..\引用\SharpCompress.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="XXF, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\引用\XXF.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Commands\BaseCommand.cs" />
+    <Compile Include="CommandQueueProcessor.cs" />
+    <Compile Include="Commands\CommandFactory.cs" />
+    <Compile Include="Commands\ReStartTaskCommand.cs" />
+    <Compile Include="Commands\StartTaskCommand.cs" />
+    <Compile Include="Commands\StopTaskCommand.cs" />
+    <Compile Include="Commands\UninstallTaskCommand.cs" />
+    <Compile Include="Corn\CornFactory.cs" />
+    <Compile Include="GlobalConfig.cs" />
+    <Compile Include="NodeMain.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NodeMain.Designer.cs">
+      <DependentUpon>NodeMain.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SystemMonitor\BaseMonitor.cs" />
+    <Compile Include="SystemMonitor\NodeHeartBeatMonitor.cs" />
+    <Compile Include="SystemMonitor\PingTaskWebMonitor.cs" />
+    <Compile Include="SystemMonitor\TaskPerformanceMonitor.cs" />
+    <Compile Include="SystemMonitor\TaskRecoverMonitor.cs" />
+    <Compile Include="SystemMonitor\TaskStopMonitor.cs" />
+    <Compile Include="SystemRuntime\TaskJob.cs" />
+    <Compile Include="SystemRuntime\TaskPoolManager.cs" />
+    <Compile Include="SystemRuntime\TaskProvider.cs" />
+    <Compile Include="SystemRuntime\NodeTaskRuntimeInfo.cs" />
+    <Compile Include="Tools\AppDomainLoader.cs" />
+    <Compile Include="Tools\LogHelper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Dyd.BaseService.TaskManager.Core\Dyd.BaseService.TaskManager.Core.csproj">
+      <Project>{dd7f3150-002b-4ad3-9fa3-695f52d88fcc}</Project>
+      <Name>Dyd.BaseService.TaskManager.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Dyd.BaseService.TaskManager.Domain\Dyd.BaseService.TaskManager.Domain.csproj">
+      <Project>{327e419a-e161-43b1-9a6a-3284e7f42c2b}</Project>
+      <Name>Dyd.BaseService.TaskManager.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\XXF.BaseService.TaskManager\XXF.BaseService.TaskManager.csproj">
+      <Project>{a6bbb109-7948-4c8a-86a2-817c83a365d9}</Project>
+      <Name>XXF.BaseService.TaskManager</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="NodeMain.resx">
+      <DependentUpon>NodeMain.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

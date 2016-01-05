@@ -1,0 +1,69 @@
+﻿@model List<Dyd.BaseService.TaskManager.Domain.Model.tb_performance_model>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var TaskModels = ViewBag.taskmodels as List<Dyd.BaseService.TaskManager.Domain.Model.tb_performanceinfo_model>;
+}
+
+<div class="head">
+    <div class="title">
+        当前任务性能 @Html.Raw(Dyd.BaseService.TaskManager.Web.Models.Common.HelpHtml("根据每个任务的cpu，内存等定期通知到任务调度平台，便于管理员管理任务的执行性能。目前只显示当前的内存情况。"))
+    </div>
+</div>
+<div class="orderlist m10 myorder">
+      @using (Html.BeginForm("index", "Performance",FormMethod.Get  ))
+    {
+        <div class="item_list">
+            <ul>
+                <li>
+                    <label>任务id</label>
+                    <input type="text" name="taskid" value="@(string.IsNullOrEmpty(ViewBag.taskid)?"":ViewBag.taskid)" />
+                </li>
+                <li>
+                    <label>节点id</label>
+                    <input type="text" name="nodeid" value="@(string.IsNullOrEmpty(ViewBag.nodeid)?"":ViewBag.nodeid)" />
+                </li>
+                <li>
+                    <label>排序</label>
+                    <select name="orderby">
+                        <option value="">请选择</option>
+                        <option value="cpu desc"  @(ViewBag.orderby=="cpu desc"?"selected='selected'":"")>Cpu降序</option>
+                        <option value="memory desc"  @(ViewBag.orderby=="memory desc"?"selected='selected'":"")>Memory降序</option>
+                        <option value="installdirsize desc"  @(ViewBag.orderby=="installdirsize desc"?"selected='selected'":"")>应用大小降序</option>
+                    </select>
+                </li>
+                <li>
+                    <input type="submit" class="btn1" value="搜索" accesskey="S" /></li>
+            </ul>
+        </div>
+    }
+    <div class="tab_cont">
+        <div class="list">
+            <table>
+                <tr>
+                    <th>id</th>
+                    <th>任务</th>
+                    <th>节点</th>
+                    <th>Cpu(总cpu时间 s)</th>
+                    <th>内存(M)</th>
+                    <th>应用大小(M)</th>
+                    <th>最后更新时间</th>
+                </tr>
+                @foreach (var item in TaskModels)
+                {
+                    <tr>
+                        <td>@item.model.id</td>
+                        <td><a href="@Url.Action("Index", "Task", new { taskid =item.model.taskid })">@item.taskname [@item.model.taskid]</a></td>
+                        <td>@item.nodename [@item.model.nodeid]</td>
+                        <td>@item.model.cpu.ToString("f2") (s)</td>
+                        <td>@item.model.memory.ToString("f2") (M)</td>
+                        <td>@item.model.installdirsize.ToString("f2") (M)</td>
+                         <td>@item.model.lastupdatetime</td>
+                    </tr>
+                }
+            </table>
+        </div>
+        
+    </div>
+</div>

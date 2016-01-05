@@ -1,0 +1,122 @@
+﻿@using Webdiyer.WebControls.Mvc
+@using Dyd.BaseService.TaskManager.Domain.Model;
+@model PagedList<Dyd.BaseService.TaskManager.Domain.Model.tb_command_model_Ex>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<tb_task_model> Task = ViewBag.Task as List<tb_task_model>;
+    List<tb_node_model> Node = ViewBag.Node as List<tb_node_model>;
+}
+<script>
+    function Delete(id)
+    {
+        if (confirm("确定删除吗？") == true)
+        {
+            $.ajax({
+                url: "@Url.Action("delete", "command")",
+                type: "post",
+                data: {
+                    id:id
+                },
+                success: function (data) {
+                    if (data.code == 1) {
+                        alert("成功！");
+                        window.location.reload();
+                    }
+                    else {
+                        alert(data.msg);
+                    }
+                }
+            })
+        }
+    }
+</script>
+
+<div class="head">
+    <div class="title">
+        命令列表 @Html.Raw(Dyd.BaseService.TaskManager.Web.Models.Common.HelpHtml("用于显示任务管理站点和任务节点之间的命令列表，及命令执行情况。这些命令只用于存档，可以定期从数据库中清理。【注：节点不会执行已经过期的命令。】"))
+    </div>
+</div>
+<div class="orderlist m10 myorder">
+    @using (Html.BeginForm("Index", "command",FormMethod.Get ))
+    {
+        <div class="item_list">
+            <ul>
+                <li>
+                    <label>任务</label>
+                    <select name="taskid">
+                        <option value="-1">请选择</option>
+                        @foreach (var t in Task)
+                        { 
+                            <option value="@t.id"  @(ViewBag.taskid==t.id?"selected='selected'":"")>@t.taskname</option>
+                        }
+                    </select>
+                </li>
+                <li>
+                    <label>节点</label>
+                    <select name="nodeid">
+                        <option value="-1">请选择</option>
+                        @foreach (var n in Node)
+                        { 
+                            <option value="@n.id" @(ViewBag.nodeid==n.id?"selected='selected'":"")>@n.nodename</option>
+                        }
+                    </select>
+                </li>
+                <li>
+                    <label>执行状态</label>
+                    <select name="commandstate">
+                        <option value="-1">请选择</option>
+                        @foreach (var value in Enum.GetValues(typeof(Dyd.BaseService.TaskManager.Core.EnumTaskCommandState)))
+                        {
+                            object[] objAttrs = value.GetType().GetField(value.ToString()).GetCustomAttributes(typeof(System.ComponentModel.DescriptionAttribute), true);
+                            if (objAttrs != null && 
+                                objAttrs.Length > 0)
+                            {
+                                System.ComponentModel.DescriptionAttribute descAttr = objAttrs[0] as System.ComponentModel.DescriptionAttribute;
+                                <option value="@((int)value)" @(ViewBag.commandstate==(int)value?"selected='selected'":"")>@descAttr.Description</option>
+                            }
+                        }
+                    </select>
+                </li>
+                <li class="search">
+                    <input type="submit" class="btn1" value="搜索" accesskey="S" />
+                </li>
+            </ul>
+        </div>
+    }
+    <div class="tab_cont">
+        <a href="@Url.Action("add", "command")" class="btn1" >新增</a>
+        <div class="list">
+            <table>
+                <tr>
+                    <th>id</th>
+                    <th>任务名</th>
+                    <th>命令json</th>
+                    <th>命令名称</th>
+                    <th>状态</th>
+                    <th>节点ID</th>
+                    <th>操作</th>
+                </tr>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.id</td>
+                        <td><a href="@Url.Action("Index", "Task", new { taskid = item.taskid })">@item.taskname [@item.taskid]</a></td>
+                        <td>@item.command</td>
+                        <td>@item.commandname</td>
+                        <td>@(Dyd.BaseService.TaskManager.Core.EnumUtils<Dyd.BaseService.TaskManager.Core.EnumTaskCommandState>.GetText((Dyd.BaseService.TaskManager.Core.EnumTaskCommandState)item.commandstate))</td>
+                        <td>@item.nodename [@item.nodeid]</td>
+                        <td>
+                            <a href="@Url.Action("Update", "Command", new { id = item.id })">修改</a>
+                            <input type="button" onclick="Delete('@item.id    ')" value="删除" />
+                        </td>
+                    </tr>
+                }
+            </table>
+            <div class="total pt10">
+                <div class="fl">共<em>@Model.TotalPageCount</em>页<em>@Model.TotalItemCount</em>条记录，当前为第<em>@Model.CurrentPageIndex</em>页</div>
+                @Html.Pager(Model, new PagerOptions { PageIndexParameterName = "pageindex", ShowPageIndexBox = true, PageIndexBoxType = PageIndexBoxType.TextBox, CssClass = "mvcPager" })
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,37 @@
+﻿@{
+    Layout = null;
+    if(ViewBag.uid==null)
+    {
+        ViewBag.uid = "";   
+    }
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>登录点呀点</title>
+    <link href="~/Content/css/css.css" rel="stylesheet" />
+    <link href="~/Content/css/login.css" rel="stylesheet" />
+    <script type="text/javascript">
+        window.onload = function () {
+            document.getElementById("username").focus();
+          //  document.all.username.focus();
+        }
+    </script>
+</head>
+<body>
+    <div class="login">
+        <ul class="cont mydetail">
+            @using (Html.BeginForm())
+            {
+                <li><label>登录名：</label><input type="text" name="username"  id="username" value="@ViewBag.username" /></li>
+                <li><label>密码：</label><input type="password" name="password"  id="password" /></li>
+                <li class="search"><input class="btn1" type="submit" value="登录" /></li>
+            }
+        </ul>
+        @Html.ValidationSummary()
+    </div>
+</body>
+</html>

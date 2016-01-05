@@ -1,0 +1,38 @@
+﻿@{
+    ViewBag.Title = "NodeIndex";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var NodeModels = ViewBag.nodemodels as List<Dyd.BaseService.TaskManager.Domain.Model.tb_performanceinfo_model>;
+}
+
+<div class="head">
+    <div class="title">
+        当前节点性能 @Html.Raw(Dyd.BaseService.TaskManager.Web.Models.Common.HelpHtml("用于统计当前节点上所有任务的cpu，内存等性能，非实际的节点性能，仅用于参考。后续可以改进。"))
+    </div>
+</div>
+<div class="orderlist m10 myorder">
+    <div class="tab_cont">
+       <div class="list">
+            <table>
+                <tr>
+                    <th>节点</th>
+                    <th>Cpu(总用cpu时间 s)</th>
+                    <th>内存(M)</th>
+                    <th>应用大小(M)</th>
+                    <th>最后更新时间</th>
+                </tr>
+                @foreach (var item in NodeModels)
+                {
+                    <tr>
+                        
+                        <td>@item.nodename [@item.model.nodeid]</td>
+                        <td>@item.model.cpu.ToString("f2") (s)</td>
+                        <td>@item.model.memory.ToString("f2") (M)</td>
+                        <td>@item.model.installdirsize.ToString("f2") (M)</td>
+                         <td>@item.model.lastupdatetime</td>
+                    </tr>
+                }
+            </table>
+        </div>
+    </div>
+</div>

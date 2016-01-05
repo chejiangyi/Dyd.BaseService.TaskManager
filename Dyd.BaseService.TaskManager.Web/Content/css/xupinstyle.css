@@ -1,0 +1,11 @@
+﻿/*请不要改徐品的css，也就是这个文件*/
+
+select { 
+    width:150px;
+    height:25px;
+    border:1px solid #D3D3D3;
+    font-size:16px; font-family:'Microsoft YaHei',"黑体";
+    text-align:center;
+}
+
+input[type="submit"] { width:100px; height:40px; background-image:none; background-color:#0FA6E9;}

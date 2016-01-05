@@ -1,0 +1,117 @@
+﻿@using Dyd.BaseService.TaskManager.Domain.Model;
+@{
+    ViewBag.Title = "Add";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<tb_category_model> Category = ViewBag.Category as List<tb_category_model>;
+    List<tb_node_model> Node = ViewBag.Node as List<tb_node_model>;
+    List<tb_user_model> User = ViewBag.User as List<tb_user_model>;
+}
+<style>
+    
+</style>
+
+<script>
+    function sub() {
+        if ($("#nodename").val() == "") {
+            alert("请填写节点名称！");
+            return false;
+        }
+        if ($("#TaskDll").val() == "") {
+            alert("请选择新版本文件！")
+            return false;
+        }
+        var nodeip = $("#nodeip").val();
+        if (nodeip == "") {
+            alert("请填写节点IP！");
+            return false;
+        }
+        else {
+            //ip地址
+            var exp = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+            var reg = nodeip.match(exp);
+            if (reg == null) {
+                alert("IP地址不合法！");
+                return false;
+            }
+        }
+    }
+    function save()
+    {
+        if ($("#taskremark").val().length < 20)
+        {
+            alert("备注不得少于20个字符" );
+            return false;
+        }
+    }
+</script>
+<div class="head">
+    <div class="title">
+        新增任务 @Html.Raw(Dyd.BaseService.TaskManager.Web.Models.Common.HelpHtml(""))
+    </div>
+</div>
+<div>
+    @using (Html.BeginForm("Add", "Task", FormMethod.Post, new { enctype = "multipart/form-data", @onsubmit = "return sub()" }))
+    {
+    <ul class="mydetail">
+        <li>
+            <label>任务名</label><input class="mylongtext" type="text" id="taskname" name="taskname" />
+        </li>
+        <li>
+            <label>组别</label>
+            <select name="categoryid">
+                @foreach (var c in Category)
+                { 
+                    <option value="@c.id">@c.categoryname</option>
+                }
+            </select>
+        </li> 
+        <li>
+            <label>创建人</label>
+            <select name="taskcreateuserid">
+                @foreach (var c in User)
+                { 
+                    <option value="@c.id">@c.username</option>
+                }
+            </select>
+        </li>
+        <li>
+            <label>节点</label>
+            <select name="nodeid">
+                @foreach (var n in Node)
+                { 
+                    <option value="@n.id">@n.nodename</option>
+                }
+            </select>
+        </li>
+        <li>
+            <label>任务配置json</label>
+            <textarea id="taskappconfigjson" name="taskappconfigjson" style="height:200px"></textarea>示范:{"key1":"value1","key2":"value2"}
+        </li>
+        <li>
+            <label>数据库临时数据json</label>
+            <textarea id="tempdatajson" name="tempdatajson" style="height:200px"></textarea>示范:{"key1":"value1","key2":"value2"}
+        </li>
+        <li>
+            <label>Cron表达式</label>
+            <input  type="text" id="taskcron" name="taskcron" />示范：0/5 * * * * ?  <a target="_blank" href="@Url.Action("cron", "Task", new {  })">Cron表达式生成器</a>（百度搜索:Cron表达式实例 ）<a target="_blank" href="@Url.Action("CustomCorn", "Task", new {  })">自定义cron表达式</a>
+
+        </li>
+        <li>
+            <label>任务入口类的命名空间</label><input class="mylongtext" type="text" id="taskmainclassnamespace" name="taskmainclassnamespace" />示范：Dyd.BaseService.TaskManager.Demo.DemoTask
+        </li>
+        <li>
+            <label>任务入口dll文件名</label><input class="mylongtext" type="text" id="taskmainclassdllfilename" name="taskmainclassdllfilename" />示范: Dyd.BaseService.TaskManager.Demo.exe
+        </li>
+        <li>
+            <label>上传文件</label><input type="file" id="TaskDll" name="TaskDll" />
+        </li>
+        <li>
+            <label>备注</label>
+            <textarea id="taskremark" name="taskremark" style="height:200px"></textarea>(不得少于20个字符)
+        </li>
+        <li>
+            <input type="submit" class="btn1" value="提交" onclick="return save()" />
+        </li>
+    </ul>
+    }
+</div>

@@ -1,0 +1,50 @@
+﻿@{
+    ViewBag.Title = "Add";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+   
+</style>
+<script>
+    function sub() {
+        if ($("#nodename").val() == "") {
+            alert("请填写节点名称！");
+            return false;
+        }
+        var nodeip = $("#nodeip").val();
+        if (nodeip == "") {
+            alert("请填写节点IP！");
+            return false;
+        }
+        //else {
+        //    //ip地址
+        //    var exp = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+        //    var reg = nodeip.match(exp);
+        //    if (reg == null) {
+        //        alert("IP地址不合法！");
+        //        return false;
+        //    }
+        //}
+    }
+</script>
+<div class="head">
+    <div class="title">
+        新增节点 @Html.Raw(Dyd.BaseService.TaskManager.Web.Models.Common.HelpHtml(""))
+    </div>
+</div>
+<div>
+    @using (Html.BeginForm("Add", "Node", FormMethod.Post, new { @onsubmit = "return sub()" }))
+    {
+    <ul class="mydetail">
+        <li>
+            <label>节点名</label><input type="text" id="nodename" name="nodename" />
+        </li>
+        <li>
+            <label>节点ip/host</label><input type="text" id="nodeip" name="nodeip" />
+        </li>
+        <li>
+            <input type="submit" class="btn1" value="提交" />
+        </li>
+    </ul>
+    }
+</div>

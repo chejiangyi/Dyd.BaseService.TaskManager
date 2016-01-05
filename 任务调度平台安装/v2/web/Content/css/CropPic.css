@@ -1,0 +1,25 @@
+﻿#rRightDown, #rLeftDown, #rLeftUp, #rRightUp, #rRight, #rLeft, #rUp, #rDown {
+    position: absolute;
+    background: #FFF;
+    border: 1px solid #333;
+    width: 6px;
+    height: 6px;
+    z-index: 500;
+    font-size: 0;
+    opacity: 0.5;
+    filter: alpha(opacity=50);
+}
+#rLeftDown, #rRightUp {cursor: ne-resize;}
+#rRightDown, #rLeftUp {cursor: nw-resize;}
+#rRight, #rLeft {cursor: e-resize;}
+#rUp, #rDown {cursor: n-resize;}
+#rLeftDown {left: -4px;bottom: -4px;}
+#rRightUp {right: -4px;top: -4px;}
+#rRightDown {right: -4px;bottom: -4px;background-color: #00F;}
+#rLeftUp {left: -4px;top: -4px;}
+#rRight {right: -4px;top: 50%;margin-top: -4px;}
+#rLeft {left: -4px;top: 50%;margin-top: -4px;}
+#rUp {top: -4px;left: 50%;margin-left: -4px;}
+#rDown {bottom: -4px;left: 50%;margin-left: -4px;}
+#dragDiv {border: 1px dashed #fff;width: 128px;height: 42px;top:50px; left:50px;cursor: move;position:absolute}
+#bgDiv{left:200px; position:relative;top: -5px;min-height: 200px;}

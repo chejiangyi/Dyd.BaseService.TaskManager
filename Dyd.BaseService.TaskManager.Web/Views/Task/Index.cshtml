@@ -1,0 +1,282 @@
+﻿@using Webdiyer.WebControls.Mvc
+@using Dyd.BaseService.TaskManager.Domain.Model;
+@model PagedList<Dyd.BaseService.TaskManager.Domain.Model.tb_tasklist_model>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<tb_category_model> Category = ViewBag.Category as List<tb_category_model>;
+    List<tb_node_model> Node = ViewBag.Node as List<tb_node_model>;
+    List<tb_user_model> User = ViewBag.User as List<tb_user_model>;
+    int role = Convert.ToInt32(ViewBag.Role);
+    int num = Convert.ToInt32(ViewBag.Number);
+}
+<script src="~/Scripts/Task.js"></script>
+<script>
+    function CheckAll()
+    {
+        $("[name=checkson]").prop("checked",$("#checkall").prop("checked"));
+    }
+
+    function ChangeTaskState(id, nodeid, taskname,state) {
+        if (confirm("是否启动？") == true) {
+            $.ajax({
+                url: '@Url.Action("ChangeTaskState", "Task")',
+                type: "post",
+                data: {
+                    id: id,
+                    state: state,
+                    nodeid : nodeid
+                },
+                success: function (data) {
+                    if (data.code == 1) {
+                        var task=new CreateTask(id,state,taskname,window.document);
+                        task.Init();
+                    }
+                    else {
+                        alert(taskname + ' ' +data.msg);
+                    }
+                }
+            });
+        }
+    }
+
+    function ChangeMoreState()
+    {
+        var tasklist=$("[name=checkson]:checked");
+        var json=new Array();
+        tasklist.each(function(){
+            json.push({
+                id:$(this).val(),
+                state:$(this).attr("data-state"),
+                nodeid:$(this).attr("data-nodeid"),
+            });
+        });
+        var postStr=JSON.stringify(json);
+        $.ajax({
+            url: '@Url.Action("ChangeMoreTaskState", "Task")',
+            type: "post",
+            data: {
+                poststr:postStr
+            },
+            success: function (data) {
+                if (data.code == 1) {
+                    for(var d in data.data)
+                    {
+                        var task=new CreateTask(data.data[d].id,data.data[d].state);
+                        task.Init();
+                    }
+                }
+                else {
+                    alert(data.msg);
+                }
+            }
+        });
+    }
+    function Delete(id) {
+        if(confirm("删除该任务前要确认该任务已经在对应的节点中已经卸载、任务状态停止运行，否则会造成任务异常！"))
+        {
+            $.ajax({
+                url: '@Url.Action("Delete", "Task")',
+                type: "post",
+                data: {
+                    id: id
+                },
+                success: function (data) {
+                    if (data.code == 1) {
+                        if (data.state == true) {
+                            alert("删除成功！");
+                            window.location.reload();
+                        }
+                        else {
+                            alert("删除失败，请确认任务状态停止！");
+                        }
+                    }
+                    else {
+                        alert(data.msg);
+                    }
+                }
+            });
+        }
+    } 
+    function Uninstall(id) {
+        if(confirm("确定要尝试强制卸载该任务？"))
+        {
+            $.ajax({
+                url: '@Url.Action("Uninstall", "Task")',
+                type: "post",
+                data: {
+                    id: id
+                },
+                success: function (data) {
+                    if (data.code == 1) {
+                            alert("已经尝试强制卸载该任务，并将任务状态置为停止！");
+                            window.location.reload();
+                    }
+                    else {
+                        alert(data.msg);
+                    }
+                }
+            });
+        }
+    }
+</script>
+<div class="head">
+    <div class="title">
+        任务列表 @Html.Raw(Dyd.BaseService.TaskManager.Web.Models.Common.HelpHtml("整个平台的任务管理，任务将以dll的形式挂载入各个集群节点中运行，并监控运行状态，当出现异常时，会打印错误日志并通知管理员和开发人员。"))
+    </div>
+</div>
+<div class="orderlist m10 myorder">
+    @using (Html.BeginForm("index", "Task",FormMethod.Get))
+    {
+    <div class="item_list pt10">
+        <div class="item_list">
+            <ul>
+                <li>
+                    <label>任务id</label>
+                    <input type="text" name="taskid" value="@(string.IsNullOrEmpty(ViewBag.taskid)?"":ViewBag.taskid)" />
+                </li>
+                <li>
+                    <label>关键字</label>
+                    <input type="text" name="keyword" value="@(string.IsNullOrEmpty(ViewBag.keyword)?"":ViewBag.keyword)" />
+                </li>
+                <li>
+                    <label>分类</label>
+                    <select name="categoryid">
+                        <option value="-1">请选择</option>
+                        @foreach (var c in Category)
+                        { 
+                            <option value="@c.id"  @(ViewBag.categoryid==c.id?"selected='selected'":"")>@c.categoryname</option>
+                        }
+                    </select>
+                </li>
+                <li>
+                    <label>节点</label>
+                    <select name="nodeid">
+                        <option value="-1">请选择</option>
+                        @foreach (var n in Node)
+                        { 
+                            <option value="@n.id"  @(ViewBag.nodeid==n.id?"selected='selected'":"")>@n.nodename</option>
+                        }
+                    </select>
+                </li>
+                <li>
+                    <label>创建人</label>
+                    @if (role == (int)Dyd.BaseService.TaskManager.Core.EnumUserRole.Admin)
+                    {
+                        <select name="userid">
+                            <option value="-1">请选择</option>
+                            @foreach (var u in User)
+                            { 
+                                <option value="@u.id"  @(ViewBag.userid==u.id?"selected='selected'":"")>@u.username</option>
+                            }
+                        </select>
+                    }
+                    else
+                    {
+                        <select name="userid">
+                            @foreach (var u in User.Where(c=>c.id==num))
+                            { 
+                                <option value="@u.userstaffno" @Html.Raw(u.id == num ? "selected=selected" : "")  @((ViewBag.userid+""==u.userstaffno)?"selected='selected'":"")>@u.username</option>
+                            }
+                        </select>
+                    }
+                </li>
+                <li>
+                    <label>状态</label>
+                    <select name="state">
+                        <option value="-999">请选择</option>
+                         @foreach (var o in (Dyd.BaseService.TaskManager.Core.EnumUtils<Dyd.BaseService.TaskManager.Core.EnumTaskState>.GetAllEnumsOfList2()))
+                         {
+                              <option value="@o.Value" @((ViewBag.state+"")==o.Value?"selected='selected'":"")>@o.Text</option>
+                         }
+  
+                    </select>
+                </li>
+                <li>
+                    <label>创建时间</label><input type="text" class="text" autocomplete="off"name="CStime" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'1900-01-01',readOnly:true})" value="@(string.IsNullOrEmpty(ViewBag.CStime)?"":ViewBag.CStime)" />
+                    至
+                <input type="text" class="text" autocomplete="off" name="CEtime" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'1900-01-01',readOnly:true})" value="@(string.IsNullOrEmpty(ViewBag.CEtime)?"":ViewBag.CEtime)"/>
+                </li>
+                
+                <li class="search">
+                    <input type="submit" class="btn1" value="搜索" accesskey="S" /></li>
+            </ul>
+        </div>
+    </div>
+    }
+    <div class="tab_cont">
+        @if (role == (int)Dyd.BaseService.TaskManager.Core.EnumUserRole.Admin)
+        {
+            <a class="btn1" href="@Url.Action("add", "task")">新增</a>@*
+            <input type="button" class="btn1" onclick="ChangeMoreState()" value="批量处理" />*@
+        }
+        <div id="tradelist" class="list">
+            <table >
+                <tr>
+                    <th><input type="checkbox" id="checkall" onclick="CheckAll()" /></th>
+                    <th>id</th>
+                    <th>任务名</th>
+                    <th>当前运行状态</th>
+                    <th>任务信息</th>
+                    <th style="width:300px;">任务备注</th>
+                    <th style="width:100px">操作</th>
+                </tr>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td><input type="checkbox" name="checkson" data-state="@item.taskstate" data-nodeid="@item.nodeid" value="@item.id" /></td>
+                        <td >@item.id</td>
+                        <td >@item.taskname</td>
+                        <td style="word-break:break-all; text-align:left; vertical-align:top"> 
+                            【最近开始时间】@item.tasklaststarttime<br/>
+                            【最近结束时间】@item.tasklastendtime<br/>@{var state=Dyd.BaseService.TaskManager.Core.EnumUtils<Dyd.BaseService.TaskManager.Core.EnumTaskState>.GetText((Dyd.BaseService.TaskManager.Core.EnumTaskState)item.taskstate);}
+                            【任务运行状态】@Html.Raw((item.taskstate == (int)Dyd.BaseService.TaskManager.Core.EnumTaskState.Stop) ? string.Format("<b class='runstate'>{0}</b>",state) : string.Format("<b class='stopstate'>{0}</b>",state))<br/>
+                            【运行成功次数】@item.taskruncount<br/>
+                            【上次出错时间】@item.tasklasterrortime<br/>
+                            【连续错误次数】@item.taskerrorcount<br/>
+                        </td>
+                        <td style="word-break:break-all; text-align:left">
+                            【分类】@item.categoryname [@item.categoryid]<br/>
+                            【节点】@item.nodename [@item.nodeid]<br/>
+                            【cron】@item.taskcron<br/>
+                            【版本】@item.taskversion<br/>
+                            【修改时间】@item.taskupdatetime<br/>
+                            【创建时间】@item.taskcreatetime<br/>
+                            【创建人】@item.username<br/>
+                        </td>
+                        <td style="word-break:break-all; text-align:left; vertical-align:top;">@item.taskremark</td>
+                        <td>
+                            
+                            @if (role == (int)Dyd.BaseService.TaskManager.Core.EnumUserRole.Admin)
+                            {
+                                if (item.taskstate == 0)
+                                {
+                                    <span id="Start_@item.id"><input type="button" class="btn1 hide" onclick="ChangeTaskState('@item.id','@item.nodeid','@item.taskname',1)" value="启动" /></span>
+                                    <span id="Stop_@item.id" class="hide"><input type="button" class="btn1" onclick="ChangeTaskState('@item.id','@item.nodeid','@item.taskname',0)" value="停止" /></span>
+                                 <input class="btn1" type="button" value="强制卸载" onclick="Uninstall('@item.id    ')" />
+                                <input class="btn1" type="button" value="删除" onclick="Delete('@item.id    ')" />
+                                }
+                                else
+                                {
+                                    <span id="Start_@item.id" class="hide"><input type="button" class="btn1" onclick="ChangeTaskState('@item.id','@item.nodeid','@item.taskname',1)" value="启动" /></span>
+                                    <span id="Stop_@item.id"><input type="button" class="btn1 hide" onclick="ChangeTaskState('@item.id','@item.nodeid','@item.taskname',0)" value="停止" /></span>
+                                 <input class="btn1" type="button" value="强制卸载" onclick="Uninstall('@item.id    ')" />
+                                }
+                                
+                                
+                            }
+                            <p><a class="btn1" href="@Url.Action("Update", "Task", new { taskid = item.id })" target="_blank">
+                                @((role==(int)Dyd.BaseService.TaskManager.Core.EnumUserRole.Admin && item.taskstate==(int)Dyd.BaseService.TaskManager.Core.EnumTaskState.Stop)?"修改":"查看")</a></p>
+                            
+                            <p><a class="btn1" href="@Url.Action("Log", "Log", new { taskid = @item.id })" target="_blank">查看日志</a></p>
+                        </td>
+                    </tr>
+                }
+            </table>
+            <div class="total pt10">
+                <div class="fl">共<em>@Model.TotalPageCount</em>页<em>@Model.TotalItemCount</em>条记录，当前为第<em>@Model.CurrentPageIndex</em>页</div>
+                @Html.Pager(Model, new PagerOptions { PageIndexParameterName = "pageindex", ShowPageIndexBox = true, PageIndexBoxType = PageIndexBoxType.TextBox, CssClass = "mvcPager" },new MvcAjaxOptions { UpdateTargetId = "searchForm" })
+            </div>
+        </div>
+    </div>
+</div>

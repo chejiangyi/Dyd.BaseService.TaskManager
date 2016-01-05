@@ -1,0 +1,23 @@
+﻿@{
+    ViewBag.Title = "Add";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="head">
+    <div class="title">
+        新增分类 @Html.Raw(Dyd.BaseService.TaskManager.Web.Models.Common.HelpHtml(""))
+    </div>
+</div>
+<div>
+    @using (Html.BeginForm("Add", "Category", FormMethod.Post))
+    {
+    <ul class="mydetail">
+        <li>
+            <label>分类名</label><input type="text" name="categoryname" />
+        </li>
+        <li>
+            <input type="submit" class="btn1" value="提交" />
+        </li>
+    </ul>
+    }
+</div>

@@ -1,0 +1,74 @@
+﻿@using Webdiyer.WebControls.Mvc
+@model List<Dyd.BaseService.TaskManager.Domain.Model.tb_user_model>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    function Delete(id) {
+        $.ajax({
+            url: '@Url.Action("Delete", "User")',
+            type: "post",
+            data: {
+                id: id
+            },
+            success: function (data) {
+                if (data.code == 1) {
+                    if (data.state == true) {
+                        alert("删除成功！");
+                        window.location.reload();
+                    }
+                    else {
+                        alert("删除失败：请确认该用户下的任务已清除！");
+                    }
+                }
+                else {
+                    alert(data.msg);
+                }
+            }
+        })
+    }
+</script>
+<div class="head">
+    <div class="title">
+        用户 @Html.Raw(Dyd.BaseService.TaskManager.Web.Models.Common.HelpHtml("用于管理任务调度平台的开发人员和管理员，此处的用户来源于crm系统，故必须是公司员工，并输入员工编号"))
+    </div>
+</div>
+<div class="orderlist m10 myorder">
+    <a href="@Url.Action("add", "user")" class="btn1">新增</a>
+    <div class="tab_cont">
+        <div class="list">
+            <table>
+                <tr>
+                    <th>id</th>
+                    <th>用户工号</th>
+                    <th>用户名</th>
+                    <th>类型</th>
+                    <th>创建时间</th>
+                    <th>手机</th>
+                    <th>邮箱</th>
+                    <th>操作</th>
+                </tr>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.id</td>
+                        <td>@item.userstaffno</td>
+                        <td>@item.username</td>
+                        <td>@(Dyd.BaseService.TaskManager.Core.EnumUtils<Dyd.BaseService.TaskManager.Core.EnumUserRole>.GetText((Dyd.BaseService.TaskManager.Core.EnumUserRole)item.userrole))</td>
+                        <td>@item.usercreatetime</td>
+                        <td>@item.usertel</td>
+                        <td>@item.useremail</td>
+                        <td>
+                              <a href="@Url.Action("Add", "User", new { userid = @item.id })">修改</a>
+                            <input type="button" value="删除" onclick="Delete('@item.id    ')" />
+                            <a href="@Url.Action("Index", "Task", new { userid = @item.id })">查看任务</a>
+                        </td>
+                    </tr>
+                }
+            </table>
+            <div class="total pt10">
+            </div>
+        </div>
+    </div>
+</div>

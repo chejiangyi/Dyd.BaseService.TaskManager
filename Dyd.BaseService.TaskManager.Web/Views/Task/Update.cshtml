@@ -1,0 +1,137 @@
+﻿@using Dyd.BaseService.TaskManager.Domain.Model
+@model Dyd.BaseService.TaskManager.Domain.Model.tb_task_model
+@{
+    ViewBag.Title = "Update";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<tb_category_model> Category = ViewBag.Category as List<tb_category_model>;
+    List<tb_node_model> Node = ViewBag.Node as List<tb_node_model>;
+    List<tb_user_model> User = ViewBag.User as List<tb_user_model>;
+    List<tb_version_model> Version = ViewBag.Version as List<tb_version_model>;
+    tb_tempdata_model TempData = ViewBag.TempData as tb_tempdata_model;
+    int role = Convert.ToInt32(ViewBag.Role);
+    if (role != (int)Dyd.BaseService.TaskManager.Core.EnumUserRole.Admin)
+    {
+        Model.taskstate = (int)Dyd.BaseService.TaskManager.Core.EnumTaskState.Running;
+    }
+}
+
+<script>
+    function sub() {
+        if ($("#nodename").val() == "") {
+            alert("请填写节点名称！");
+            return false;
+        }
+        var sel = $("#taskversion").find("option:selected").val();
+        if (sel == -1) {
+            if ($("#TaskDll").val() == "") {
+                alert("请选择新版本文件！")
+                return false;
+            }
+        }
+        var nodeip = $("#nodeip").val();
+        if (nodeip == "") {
+            alert("请填写节点IP！");
+            return false;
+        }
+        else {
+            //ip地址
+            var exp = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+            var reg = nodeip.match(exp);
+            if (reg == null) {
+                alert("IP地址不合法！");
+                return false;
+            }
+        }
+    }
+</script>
+<div class="head">
+    <div class="title">
+        修改任务 @Html.Raw(Dyd.BaseService.TaskManager.Web.Models.Common.HelpHtml(""))
+    </div>
+</div>
+<div>
+    @Html.ValidationSummary()
+    @if (Model != null)
+    { 
+        <input type="hidden" value="@Model.id" id="id" />
+        using (Html.BeginForm("Update", "Task", FormMethod.Post, new { enctype = "multipart/form-data",@onsubmit="return sub()" }))
+        {
+            <input type="hidden" value="@Model.id" name="id" />
+        <ul  class="mydetail">
+            <li>
+                <label>任务名</label><input class="mylongtext" type="text" @Html.Raw(Model.taskstate==(int)Dyd.BaseService.TaskManager.Core.EnumTaskState.Running?"readonly=readonly":"") name="taskname" value="@Model.taskname" />
+            </li>
+            <li>
+                <label>组别</label>
+                <select name="categoryid" @Html.Raw(Model.taskstate==(int)Dyd.BaseService.TaskManager.Core.EnumTaskState.Running?"readonly=readonly":"")>
+                    @foreach (var c in Category)
+                    { 
+                        <option value="@c.id" @Html.Raw(c.id==@Model.categoryid?"selected=selected":"")>@c.categoryname</option>
+                    }
+                </select>
+            </li>
+            <li>
+                <label>创建人</label>
+                <select name="taskcreateuserid">
+                    @foreach (var c in User)
+                    { 
+                        <option value="@c.id" @Html.Raw(c.id==@Model.taskcreateuserid?"selected=selected":"")>@c.username</option>
+                    }
+                </select>
+            </li>
+            <li>
+                <label>节点</label>
+                <select name="nodeid" @Html.Raw(Model.taskstate==(int)Dyd.BaseService.TaskManager.Core.EnumTaskState.Running?"readonly=readonly":"")>
+                    @foreach (var n in Node)
+                    { 
+                        <option value="@n.id" @Html.Raw(n.id==@Model.nodeid?"selected=selected":"")>@n.nodename</option>
+                    }
+                </select>
+            </li>
+            <li>
+                <label>任务配置json</label>
+                <textarea id="taskappconfigjson" name="taskappconfigjson" @Html.Raw(Model.taskstate==(int)Dyd.BaseService.TaskManager.Core.EnumTaskState.Running?"readonly=readonly":"") style="height:200px">@Model.taskappconfigjson</textarea>
+            </li>
+            <li>
+                <label>数据库临时数据json</label>
+                <textarea id="tempdatajson" name="tempdatajson" @Html.Raw(Model.taskstate==(int)Dyd.BaseService.TaskManager.Core.EnumTaskState.Running?"readonly=readonly":"") style="height:200px">@TempData.tempdatajson</textarea>示范:{"key1":"value1","key2":"value2"}
+            </li>
+            <li>
+                <label>Cron表达式</label>
+
+                <input  type="text"  id="taskcron" name="taskcron" @Html.Raw(Model.taskstate==(int)Dyd.BaseService.TaskManager.Core.EnumTaskState.Running?"readonly=readonly":"") value="@Model.taskcron"> <a target="_blank" href="@Url.Action("cron", "Task", new {  })">Cron表达式生成器</a> <a target="_blank" href="@Url.Action("CustomCorn", "Task", new {  })">自定义cron表达式</a>
+            </li>
+            <li>
+                <label>任务入口类的命名空间</label><input class="mylongtext" type="text" @Html.Raw(Model.taskstate==(int)Dyd.BaseService.TaskManager.Core.EnumTaskState.Running?"readonly=readonly":"") id="taskmainclassnamespace" name="taskmainclassnamespace" value="@Model.taskmainclassnamespace" />
+            </li>
+            <li>
+                <label>任务入口dll文件名</label><input class="mylongtext" type="text" @Html.Raw(Model.taskstate==(int)Dyd.BaseService.TaskManager.Core.EnumTaskState.Running?"readonly=readonly":"") id="taskmainclassdllfilename" name="taskmainclassdllfilename" value="@Model.taskmainclassdllfilename" />
+            </li>
+            <li>
+                <label>版本</label>
+                <select id="taskversion" name="taskversion" @Html.Raw(Model.taskstate==(int)Dyd.BaseService.TaskManager.Core.EnumTaskState.Running?"readonly=readonly":"")>
+                    <option value="-1">新版本</option>
+                    @foreach(var v in Version)
+                    {
+                        <option value="@v.version" @Html.Raw(v.version==@Model.taskversion?"selected=selected":"") >@(v.version)_@(v.zipfilename)</option>
+                    }
+                </select>
+            </li>
+            <li>
+                <label>上传文件</label><input type="file" @Html.Raw(Model.taskstate==(int)Dyd.BaseService.TaskManager.Core.EnumTaskState.Running?"readonly=readonly":"") id="TaskDll" name="TaskDll" />
+            </li>
+            <li>
+                <label>备注</label>
+                <textarea id="taskremark" name="taskremark" @Html.Raw(Model.taskstate==(int)Dyd.BaseService.TaskManager.Core.EnumTaskState.Running?"readonly=readonly":"") style="height:200px">@Model.taskremark</textarea>
+            </li>
+            <li>
+                @if (Model.taskstate == (int)Dyd.BaseService.TaskManager.Core.EnumTaskState.Stop && role == (int)Dyd.BaseService.TaskManager.Core.EnumUserRole.Admin)
+                {
+                    <input type="submit" class="btn1" value="提交" />
+                }
+
+            </li>
+        </ul>
+        }
+    }
+</div>

@@ -1,0 +1,42 @@
+﻿@model Dyd.BaseService.TaskManager.Domain.Model.tb_user_model
+@{
+    ViewBag.Title = "Add";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="head">
+    <div class="title">
+        @(Model==null?"添加":"编辑")用户 @Html.Raw(Dyd.BaseService.TaskManager.Web.Models.Common.HelpHtml(""))
+    </div>
+</div>
+<div>
+   
+    @using (Html.BeginForm("Add", "User", FormMethod.Post))
+    {
+         <input type="hidden" value="@(Model==null?"0":Model.id+"")" name="id" id="id" />
+    <ul class="mydetail">
+        <li>
+            <label>编号</label><input type="text" name="userstaffno" value="@(Model==null?"":Model.userstaffno)" />
+        </li>
+        <li>
+            <label>用户名</label><input type="text" name="username"  value="@(Model==null?"":Model.username)" />
+        </li>
+        <li>
+            <label>账户类型</label>
+            <select name="userrole">
+                <option value="0" @((Model!=null&&Model.userrole==0)?"selected='selected'":"")>管理员</option>
+                <option value="1" @((Model!=null&&Model.userrole==1)?"selected='selected'":"")>开发人员</option>
+            </select>
+        </li>
+        <li>
+            <label>手机</label><input type="text" name="usertel"  value="@(Model==null?"":Model.usertel)" />
+        </li>
+        <li>
+            <label>邮箱</label><input type="text" name="useremail"  value="@(Model==null?"":Model.useremail)" />
+        </li>
+        <li>
+            <input type="submit" class="btn1" value="提交" />
+        </li>
+    </ul>
+    }
+</div>

@@ -1,0 +1,80 @@
+﻿@using Webdiyer.WebControls.Mvc
+@model List<Dyd.BaseService.TaskManager.Domain.Model.tb_category_model>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    function Change(id, name) {
+        $.ajax({
+            url: '@Url.Action("update", "category")',
+            type: "post",
+            data: {
+                id: id,
+                categoryname: name
+            },
+            success: function (data) {
+                if (data.code == 1) {
+                    alert("成功！");
+                }
+            }
+        });
+    }
+    function Delete(id) {
+        $.ajax({
+            url: '@Url.Action("Delete", "category")',
+            type: "post",
+            data: {
+                id: id
+            },
+            success: function (data) {
+                if (data.code == 1) {
+                    if (data.state == true) {
+                        alert("删除成功！");
+                        window.location.reload();
+                    }
+                    else {
+                        alert("删除失败,请确认该分类下的任务已清除！");
+                    }
+                }
+                else {
+                    alert(data.msg);
+                }
+            }
+        })
+    }
+</script>
+
+<div class="head">
+    <div class="title">
+        分类列表 @Html.Raw(Dyd.BaseService.TaskManager.Web.Models.Common.HelpHtml("用于任务的分类管理，如分成DBA任务，后端任务，运维任务等分类"))
+    </div>
+</div>
+<div class="orderlist m10 myorder">
+    <div class="tab_cont">
+        <a href="@Url.Action("Add", "CateGory")" class="btn1">新增</a>
+        <div class="list">
+            <table>
+                <tr>
+                    <th>id</th>
+                    <th>分类名</th>
+                    <th>分类创建时间</th>
+                    <th>操作</th>
+                </tr>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.id</td>
+                        <td>
+                            <input type="text" style="width:300px" onchange="Change('@item.id',this.value)" name="" value="@item.categoryname" /></td>
+                        <td>@item.categorycreatetime</td>
+                        <td><input type="button" value="删除" onclick="Delete('@item.id')" />
+                            <a href="@Url.Action("Index", "Task", new { categoryid = @item.id })">查看任务</a>
+                        </td>
+                    </tr>
+                }
+            </table>
+        </div>
+    </div>
+</div>

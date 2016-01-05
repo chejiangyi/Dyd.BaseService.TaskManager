@@ -1,0 +1,99 @@
+﻿<!DOCTYPE html>
+@{
+    int role = Convert.ToInt32(ViewBag.Role);   
+ }
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>XX任务调度平台</title>
+    <script src="~/Scripts/jquery-1.8.2.min.js"></script>
+    <link href="~/Content/css/css.css" rel="stylesheet" />
+    <script src="~/Scripts/DatePicker/WdatePicker.js"></script>
+</head>
+<body>
+    <div class="header">
+        <span style="color:white; font-size:25px; margin-left:25px; font-family:"微软雅黑"; font-weight:bold;">XX任务调度平台</span>
+        <div class="fr mr10">
+            
+            <span id="toptips" class="remind fl"><span id="toptips1"></span></span>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <a href="/login/logout" class="fl">退出</a>
+            }
+            else
+            {
+                <a href="/login/login" class="fl">登录</a>
+            }
+        </div>
+    </div>
+    <div class="content w">
+        <div class="leftmenu fl">
+                
+                @if(role==(int)Dyd.BaseService.TaskManager.Core.EnumUserRole.Admin)
+                {
+                    <ul class="level1">
+                        <li>
+                            <p>任务管理<i></i></p>
+                            <ul class="level2">
+                                <li><a href="@Url.Action("index", "task")">任务列表</a></li>
+                                 <li><a href="@Url.Action("index", "Node")">节点列表</a></li>
+                                <li><a href="@Url.Action("index", "category")">分类列表</a></li>
+                                <li><a href="@Url.Action("index", "command")">命令列表</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <p>日志查看<i></i></p>
+                            <ul class="level2">
+                                <li><a href="@Url.Action("errorlog", "log")">错误日志</a></li>
+                                <li><a href="@Url.Action("log", "log")">日志</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <p>性能查看<i></i></p>
+                            <ul class="level2">
+                                <li><a href="@Url.Action("index", "performance")">任务性能分析</a></li>
+                                <li><a href="@Url.Action("nodeindex", "performance")">节点性能分析</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <p>用户管理<i></i></p>
+                            <ul class="level2">
+                                <li><a href="@Url.Action("index", "user")">用户</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                }
+                else
+                {
+                    <ul class="level1">
+                        <li>
+                            <p>任务<i></i></p>
+                            <ul class="level2">
+                                <li><a href="@Url.Action("index", "task")">任务</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <p>日志<i></i></p>
+                            <ul class="level2">
+                                <li><a href="@Url.Action("errorlog", "log")">错误日志</a></li>
+                                <li><a href="@Url.Action("log", "log")">日志</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <p>性能查看<i></i></p>
+                            <ul class="level2">
+                                <li><a href="@Url.Action("index", "performance")">任务性能分析</a></li>
+                                <li><a href="@Url.Action("nodeindex", "performance")">节点性能分析</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                }
+        </div>
+        <div class="main_cont">
+            @RenderBody()
+        </div>
+    </div>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

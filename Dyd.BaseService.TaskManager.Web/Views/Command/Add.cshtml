@@ -1,0 +1,83 @@
+﻿@using Dyd.BaseService.TaskManager.Domain.Model;
+@{
+    ViewBag.Title = "Add";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<tb_task_model> Task = ViewBag.Task as List<tb_task_model>;
+    List<tb_node_model> Node = ViewBag.Node as List<tb_node_model>;
+}
+
+<script>
+    function sub() {
+        if ($("#nodename").val() == "") {
+            alert("请填写节点名称！");
+            return false;
+        }
+        var nodeip = $("#nodeip").val();
+        if (nodeip == "") {
+            alert("请填写节点IP！");
+            return false;
+        }
+        else {
+            //ip地址
+            var exp = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+            var reg = nodeip.match(exp);
+            if (reg == null) {
+                alert("IP地址不合法！");
+                return false;
+            }
+        }
+    }
+</script>
+<div class="head">
+    <div class="title">
+        新增命令 @Html.Raw(Dyd.BaseService.TaskManager.Web.Models.Common.HelpHtml(""))
+    </div>
+</div>
+<div>
+    @using (Html.BeginForm("Add", "Command", FormMethod.Post))
+    {
+    <ul class="mydetail">
+        <li>
+            <label>命令名称</label>
+            <select name="commandname">
+                <option value="ReStartTask">ReStartTask</option>
+                <option value="StopTask">StopTask</option>
+                <option value="StartTask">StartTask</option>
+                <option value="UninstallTask">UninstallTask</option>
+            </select>
+        </li>
+        <li>
+            <label>任务</label>
+            <select name="taskid">
+                @foreach (var t in Task)
+                { 
+                    <option value="@t.id">@t.taskname</option>
+                }
+            </select>
+        </li>
+        <li>
+            <label>节点</label>
+            <select name="nodeid">
+                @foreach (var n in Node)
+                { 
+                    <option value="@n.id">@n.nodename</option>
+                }
+            </select>
+        </li>
+        <li>
+            <label>命令JSON</label><textarea id="command" name="command" ></textarea>
+        </li>
+        <li>
+            <label>表达式</label>
+            <select name="commandstate">
+                <option value="0">None</option>
+                <option value="1">Error</option>
+                <option value="2">Success</option>
+            </select>
+        </li>
+        <li>
+            <input type="submit" class="btn1" value="提交" />
+        </li>
+    </ul>
+    }
+</div>
