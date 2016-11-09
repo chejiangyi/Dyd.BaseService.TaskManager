@@ -1,3 +1,5 @@
+国外网速慢,最新版本迁移至http://git.oschina.net/chejiangyi/Dyd.BaseService.TaskManager
+
 ## .net 简单任务调度平台 ##
 
 用于.net dll,exe的任务的挂载，任务的隔离，调度执行，访问权限控制，监控，管理，日志，错误预警，性能分析等。
